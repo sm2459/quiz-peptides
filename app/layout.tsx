@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Peptide Protocol Quiz",
+  title: "Health & Peptide Quiz",
   description: "Find the right peptide stack for your health goals",
 };
 
