@@ -312,9 +312,9 @@ body {
   transition: all 0.3s ease;
 }
 
-.orbit-item:hover {
+.orbit-item:hover,
+.orbit-item.active {
   background: rgba(255, 255, 255, 0.12);
-  transform: scale(1.15) !important;
 }
 
 .orbit-center {

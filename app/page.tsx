@@ -1325,6 +1325,7 @@ function ResultScreen({
   const normalizedScores = normalizeScores(scores);
   const primaryFocus = getPrimaryFocus(scores);
   const archetype = archetypes[primaryFocus[0]];
+  const [activeOrbitItem, setActiveOrbitItem] = useState<number | null>(null);
 
   const dimensionLabels: Record<HealthDimension, string> = {
     energy: "Energy & Vitality",
@@ -1544,7 +1545,10 @@ function ResultScreen({
         </div>
         <p className="text-xs mb-6" style={{ color: '#A1A1AA' }}>How your interventions work synergistically</p>
 
-        <div className="relative h-72 flex items-center justify-center">
+        <div
+          className="relative h-72 flex items-center justify-center"
+          onClick={() => setActiveOrbitItem(null)}
+        >
           {/* Orbital rings */}
           <div className="orbit-ring absolute w-36 h-36 rounded-full" />
           <div className="orbit-ring absolute w-56 h-56 rounded-full" />
@@ -1567,6 +1571,7 @@ function ResultScreen({
             const radius = i % 2 === 0 ? 72 : 108;
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
+            const isActive = activeOrbitItem === i;
 
             const colorValues = [
               '#2DD4BF', // teal - Peptide
@@ -1580,18 +1585,33 @@ function ResultScreen({
             return (
               <div
                 key={i}
-                className={`orbit-item absolute rounded-full flex items-center justify-center cursor-default group ${item.isPeptide ? 'w-14 h-14' : 'w-12 h-12'}`}
+                className={`orbit-item absolute rounded-full flex items-center justify-center cursor-pointer ${item.isPeptide ? 'w-14 h-14' : 'w-12 h-12'} ${isActive ? 'active' : ''}`}
                 style={{
-                  transform: `translate(${x}px, ${y}px)`,
+                  transform: `translate(${x}px, ${y}px)${isActive ? ' scale(1.15)' : ''}`,
                   borderColor: colorValues[i],
                   color: colorValues[i],
+                  zIndex: isActive ? 30 : 'auto',
                 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveOrbitItem(isActive ? null : i);
+                }}
+                onMouseEnter={() => setActiveOrbitItem(i)}
+                onMouseLeave={() => setActiveOrbitItem(null)}
               >
                 <div className="text-center">
                   {Icons[item.iconKey](item.isPeptide ? "w-5 h-5" : "w-4 h-4")}
                 </div>
-                {/* Tooltip on hover */}
-                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20" style={{ backgroundColor: '#27272A', border: '1px solid #3F3F46', color: '#FFFFFF' }}>
+                {/* Tooltip */}
+                <div
+                  className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-opacity pointer-events-none z-40"
+                  style={{
+                    backgroundColor: '#27272A',
+                    border: '1px solid #3F3F46',
+                    color: '#FFFFFF',
+                    opacity: isActive ? 1 : 0,
+                  }}
+                >
                   {item.title}
                 </div>
               </div>
